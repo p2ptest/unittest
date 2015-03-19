@@ -1,16 +1,24 @@
+#gteset的主目录
 GTEST_DIR = /usr/local/gtest-1.7.0
 
+#被测试程序的主目录，例如，/opt/p2p_server/branches/matrix/server/vod/mxfileproxy
 TESTED_DIR = ..
 
+#被测试类的源码名称
 TESTED_NAME = sessionmgr
 
+#gtest和被测试程序的头文件目录
 INCLUDE = -I$(GTEST_DIR)/include -I$(TESTED_DIR)/include
 
+#编译选项，-fprofile-arcs -ftest-coverage为gcov需要
 CXXFLAGS += -g -Wall -Wextra -pthread -fprofile-arcs -ftest-coverage
 
+#libgtest.a的所在目录
 LIB = -L$(GTEST_DIR)/make
 
+#生成测试报告目录
 HTML_DIR = /opt/data/gtest_report
+
 
 BINARY = $(patsubst %.cpp,%.o,$(wildcard *.cpp))
 
