@@ -1,7 +1,7 @@
 #include "gtest/gtest.h"
 #include "sessionmgr.h"
 #include <string>
-#define STRINGSIZE 100
+#define STRINGSIZE 1000
 using namespace std;
           
 TEST(SessionMgrTest, CreateAndDestroy)
@@ -42,18 +42,29 @@ bool existInStrs(string strs[], int strsSize, const string & str)
 	return false;
 }
 
+void checkLength(string strs[], int strsSize)
+{
+        for(int i=0; i<strsSize; i++)
+        {
+                EXPECT_EQ(32u, strs[i].length());
+        }
+}
+
 TEST(SessionMgrTest, GetSessionId)
 {
 	string strs[STRINGSIZE];
 	string temp;
 	CSessionMgr::Create();
-	strs[0] = "abcdefg";
+	strs[0] = "12345678901234567890123456789012";
 	for(int i=1; i < STRINGSIZE; i++)
 	{
 		CSessionMgr::GetInstance()->GetSessionId(temp);
 		EXPECT_FALSE(existInStrs(strs, i, temp));
 		strs[i] = temp;
+		//cout << temp << endl;
+		temp = "";
 	}
-	temp = "abcdefg";
+	temp = "12345678901234567890123456789012";
 	EXPECT_TRUE(existInStrs(strs, STRINGSIZE, temp));
+	checkLength(strs, STRINGSIZE);
 }
