@@ -11,7 +11,7 @@ TESTED_DIR = ..
 TESTED_NAME = sessionmgr
 
 #gtest和被测试程序的头文件目录
-INCLUDE += -I$(GTEST_DIR)/include -I$(TESTED_DIR)/include
+INCLUDE += -I. -I$(GTEST_DIR)/include -I$(TESTED_DIR)/include
 
 #编译选项，-fprofile-arcs -ftest-coverage为gcov需要，以便统计代码覆盖率
 CXXFLAGS += -g -Wall -Wextra -pthread -fprofile-arcs -ftest-coverage
