@@ -7,10 +7,19 @@ GTEST_DIR = /usr/local/gtest-1.7.0
 #被测试程序的主目录，例如，/opt/p2p_server/branches/matrix/server/vod/mxfileproxy
 TESTED_DIR = ..
 
-#被测试类的源码名称
-TESTED_NAME = sessionmgr
+#生成测试报告目录
+HTML_DIR = /opt/data/gtest_report
 
-#gtest和被测试程序的头文件目录
+###################################################
+#
+#一般只需要更改上面的变量
+#
+##################################################
+
+#被测试类的OBJ对象，过滤掉main.o
+TESTEDOBJS = $(filter-out $(TESTED_DIR)/obj/main.o,$(wildcard $(TESTED_DIR)/obj/*.o)) 
+
+#当前目录、gtest和被测试程序的头文件目录
 INCLUDE += -I. -I$(GTEST_DIR)/include -I$(TESTED_DIR)/include
 
 #编译选项，-fprofile-arcs -ftest-coverage为gcov需要，以便统计代码覆盖率
@@ -18,9 +27,6 @@ CXXFLAGS += -g -Wall -Wextra -pthread -fprofile-arcs -ftest-coverage
 
 #libgtest.a的所在目录
 LIBS += -lgtest -L$(GTEST_DIR)/make
-
-#生成测试报告目录
-HTML_DIR = /opt/data/gtest_report
 
 #当前目录所有的目标文件
 BINARY = $(patsubst %.cpp,%.o,$(wildcard *.cpp))
@@ -31,7 +37,7 @@ TARGET = gtest
 all : $(TARGET)
 
 #生成目标文件之后，将gcda文件和测试覆盖率文件删除
-$(TARGET) : $(BINARY) $(TESTED_DIR)/obj/$(TESTED_NAME).o
+$(TARGET) : $(BINARY) $(TESTEDOBJS)
 	$(CXX) $(CXXFLAGS) $(INCLUDE) $^ -o $@ $(LIBS)
 	lcov -d ./ -z
 	cd $(TESTED_DIR)/obj;lcov -d ./ -z;cd -
