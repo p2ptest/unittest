@@ -1,3 +1,6 @@
+#包括底层库和服务器的头文件和库文件
+include Makefile.comm
+
 #gteset的主目录
 GTEST_DIR = /usr/local/gtest-1.7.0
 
@@ -8,13 +11,13 @@ TESTED_DIR = ..
 TESTED_NAME = sessionmgr
 
 #gtest和被测试程序的头文件目录
-INCLUDE = -I$(GTEST_DIR)/include -I$(TESTED_DIR)/include
+INCLUDE += -I$(GTEST_DIR)/include -I$(TESTED_DIR)/include
 
 #编译选项，-fprofile-arcs -ftest-coverage为gcov需要，以便统计代码覆盖率
 CXXFLAGS += -g -Wall -Wextra -pthread -fprofile-arcs -ftest-coverage
 
 #libgtest.a的所在目录
-LIB = -L$(GTEST_DIR)/make
+LIBS += -lgtest -L$(GTEST_DIR)/make
 
 #生成测试报告目录
 HTML_DIR = /opt/data/gtest_report
@@ -22,17 +25,17 @@ HTML_DIR = /opt/data/gtest_report
 #当前目录所有的目标文件
 BINARY = $(patsubst %.cpp,%.o,$(wildcard *.cpp))
 
+#生成的目标文件
 TARGET = gtest
 
-#默认生成文件
 all : $(TARGET)
 
-#生成目标文件之前，先将gcda文件和测试报告文件删除
+#生成目标文件之后，将gcda文件和测试覆盖率文件删除
 $(TARGET) : $(BINARY) $(TESTED_DIR)/obj/$(TESTED_NAME).o
+	$(CXX) $(CXXFLAGS) $(INCLUDE) $^ -o $@ $(LIBS)
 	lcov -d ./ -z
 	cd $(TESTED_DIR)/obj;lcov -d ./ -z;cd -
 	rm -rf report.info $(HTML_DIR)/*
-	$(CXX) $(CXXFLAGS) $(INCLUDE) $^ -o $@ -lgtest $(LIB)
 
 %.o : %.cpp
 	$(CXX) -c $(CXXFLAGS) $(INCLUDE) $^ -o $@
