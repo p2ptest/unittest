@@ -32,7 +32,6 @@ TEST(SessionMgrTest, CreateAndDestroy)
     	EXPECT_EQ(NULL, t6);
 }
 
-
 bool existInStrs(string strs[], int strsSize, const string & str)
 {
 	for(int i=0; i<strsSize; i++)
