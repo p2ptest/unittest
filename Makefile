@@ -1,8 +1,8 @@
 #包括底层库和服务器的头文件和库文件
 include Makefile.comm
 
-#gteset的主目录
-GTEST_DIR = /usr/local/gtest-1.7.0
+#gmock的主目录
+GMOCK_DIR = /usr/local/gmock-1.7.0
 
 #被测试程序的主目录，例如，/opt/p2p_server/branches/matrix/server/vod/mxfileproxy
 TESTED_DIR = ..
@@ -10,26 +10,30 @@ TESTED_DIR = ..
 #生成测试报告目录
 HTML_DIR = /opt/data/gtest_report
 
-###################################################
-#
-#一般只需要更改上面的变量
-#
-##################################################
+#########################################################
+#							#
+#		一般只需要更改上面的变量		#
+#							#
+#########################################################
 
-#被测试类的OBJ对象，过滤掉main.o
-TESTEDOBJS = $(filter-out $(TESTED_DIR)/obj/main.o,$(wildcard $(TESTED_DIR)/obj/*.o)) 
+#gteset的主目录
+GTEST_DIR = $(GMOCK_DIR)/gtest
 
-#当前目录、gtest和被测试程序的头文件目录
-INCLUDE += -I. -I$(GTEST_DIR)/include -I$(TESTED_DIR)/include
+#当前目录、gtest、gmock和被测试程序的头文件目录
+INCLUDE += -I. -I$(GTEST_DIR)/include -I$(GMOCK_DIR)/include -I$(TESTED_DIR)/include
 
 #编译选项，-fprofile-arcs -ftest-coverage为gcov需要，以便统计代码覆盖率
 CXXFLAGS += -g -Wall -Wextra -pthread -fprofile-arcs -ftest-coverage
 
-#libgtest.a的所在目录
-LIBS += -lgtest -L$(GTEST_DIR)/make
+#libgmock.a的所在目录,该静态库包含gtest-all.o
+LIBS += -lgmock -L$(GMOCK_DIR)/make
 
 #当前目录所有的目标文件
 BINARY = $(patsubst %.cpp,%.o,$(wildcard *.cpp))
+
+#被测试类的OBJ对象，过滤掉main.o
+TESTEDOBJS = $(filter-out $(TESTED_DIR)/obj/main.o,$(wildcard $(TESTED_DIR)/obj/*.o)) 
+TESTEDOBJS = $(TESTED_DIR)/obj/sessionmgr.o
 
 #生成的目标文件
 TARGET = gtest
