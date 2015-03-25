@@ -33,7 +33,7 @@ BINARY = $(patsubst %.cpp,%.o,$(wildcard *.cpp))
 
 #被测试类的OBJ对象，过滤掉main.o
 TESTEDOBJS = $(filter-out $(TESTED_DIR)/obj/main.o,$(wildcard $(TESTED_DIR)/obj/*.o)) 
-TESTEDOBJS = $(TESTED_DIR)/obj/sessionmgr.o
+#TESTEDOBJS = $(TESTED_DIR)/obj/sessionmgr.o 
 
 #生成的目标文件
 TARGET = gtest
@@ -41,6 +41,7 @@ TARGET = gtest
 all : $(TARGET)
 
 #生成目标文件之后，将gcda文件和测试覆盖率文件删除
+#lcov -d ./ -z 将当前目录下的gcda覆盖率文件清空
 $(TARGET) : $(BINARY) $(TESTEDOBJS)
 	$(CXX) $(CXXFLAGS) $(INCLUDE) $^ -o $@ $(LIBS)
 	lcov -d ./ -z
@@ -70,10 +71,3 @@ clean :
 
 #忽略文件名为clean的文件
 .PHONY : clean
-
-#
-#gcov :
-#	gcov foo.c
-#
-#allgcov : 
-#	gcov foo.c gtest.c
