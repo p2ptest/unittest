@@ -20,7 +20,7 @@ HTML_DIR = /opt/data/gtest_report
 GTEST_DIR = $(GMOCK_DIR)/gtest
 
 #当前目录、gtest、gmock和被测试程序的头文件目录
-INCLUDE += -I. -I$(GTEST_DIR)/include -I$(GMOCK_DIR)/include -I$(TESTED_DIR)/include
+INCLUDE += -I. -I$(GTEST_DIR)/include -I$(GMOCK_DIR)/include -I./CODE
 
 #编译选项，-fprofile-arcs -ftest-coverage为gcov需要，以便统计代码覆盖率
 CXXFLAGS += -g -Wall -Wextra -pthread -fprofile-arcs -ftest-coverage
@@ -32,7 +32,7 @@ LIBS += -lgmock -L$(GMOCK_DIR)/make
 BINARY = $(patsubst %.cpp,%.o,$(wildcard *.cpp))
 
 #被测试类的OBJ对象，过滤掉main.o
-TESTEDOBJS = $(filter-out $(TESTED_DIR)/obj/main.o,$(wildcard $(TESTED_DIR)/obj/*.o)) 
+TESTEDOBJS = $(filter-out CODE/main.o,$(wildcard CODE/*.o)) 
 #TESTEDOBJS = $(TESTED_DIR)/obj/sessionmgr.o 
 
 #生成的目标文件
@@ -44,8 +44,8 @@ all : $(TARGET)
 #lcov -d ./ -z 将当前目录下的gcda覆盖率文件清空
 $(TARGET) : $(BINARY) $(TESTEDOBJS)
 	$(CXX) $(CXXFLAGS) $(INCLUDE) $^ -o $@ $(LIBS)
-	lcov -d ./ -z
-	cd $(TESTED_DIR)/obj;lcov -d ./ -z;cd -
+	lcov -b ./ -d ./ -z
+	cd CODE;lcov -d ./ -z;cd -
 	rm -rf report.info $(HTML_DIR)/*
 
 %.o : %.cpp
@@ -53,8 +53,7 @@ $(TARGET) : $(BINARY) $(TESTEDOBJS)
 
 #生成代码覆盖率文件，先将源码文件拷贝到obj目录中
 report :
-	-cp -p $(TESTED_DIR)/src/*/*.cpp $(TESTED_DIR)/obj
-	lcov -d ../ -c -o report.info
+	lcov -d ./ -c -o report.info
 	genhtml report.info -o $(HTML_DIR)
 
 
