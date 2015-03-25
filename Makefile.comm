@@ -6,6 +6,6 @@ SRVFRAME=${BASEBASEROOT}/srvframe
 UTILS=${BASEBASEROOT}/utils
 
 INCLUDE=-I/usr/include/mysql/ -I$(FRAMECOMMON)/include -I$(SRVFRAME)/include -I${UTILS}/include/json
-LIBS=-L${SRVFRAME}/lib  -lsrvframe -L${FRAMECOMMON}/lib -lframecommon /usr/lib64/mysql/libmysqlclient_r.a -lz -lpthread -lssl -L${UTILS}/lib -luuid -ljson -lrt
+LIBS=-L${SRVFRAME}/lib  -lsrvframe -L${FRAMECOMMON}/lib -lframecommon /usr/lib64/mysql/libmysqlclient_r.a -lz -lpthread -lssl -L${UTILS}/lib -luuid -lhiredis -ljson -lrt
 MACRO=-D_REENTRANT -D__USE_EPOLL
 CFLAGS = -g -Wall ${MACRO} -fprofile-arcs -ftest-coverage
