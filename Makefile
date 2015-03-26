@@ -1,26 +1,14 @@
 #包括底层库和服务器的头文件和库文件
 include Makefile.comm
 
-#gmock的主目录
-GMOCK_DIR = /usr/local/gmock-1.7.0
-
-#被测试程序的主目录，例如，/opt/p2p_server/branches/matrix/server/vod/mxfileproxy
-TESTED_DIR = ..
-
-#生成测试报告目录
-HTML_DIR = /opt/data/gtest_report
-
-#########################################################
-#							#
-#		一般只需要更改上面的变量		#
-#							#
-#########################################################
+#被测试程序的代码转移目录
+CODE = CODE
 
 #gteset的主目录
 GTEST_DIR = $(GMOCK_DIR)/gtest
 
-#当前目录、gtest、gmock和被测试程序的头文件目录
-INCLUDE += -I. -I$(GTEST_DIR)/include -I$(GMOCK_DIR)/include -I./CODE
+#gtest和gmock头文件目录,默认包括当前目录
+INCLUDE += -I$(GTEST_DIR)/include -I$(GMOCK_DIR)/include -I./$(CODE)
 
 #编译选项，-fprofile-arcs -ftest-coverage为gcov需要，以便统计代码覆盖率
 CXXFLAGS += -g -Wall -Wextra -pthread -fprofile-arcs -ftest-coverage
@@ -31,42 +19,55 @@ LIBS += -lgmock -L$(GMOCK_DIR)/make
 #当前目录所有的目标文件
 BINARY = $(patsubst %.cpp,%.o,$(wildcard *.cpp))
 
-#被测试类的OBJ对象，过滤掉main.o
-TESTEDOBJS = $(filter-out CODE/main.o,$(wildcard CODE/*.o)) 
-#TESTEDOBJS = $(TESTED_DIR)/obj/sessionmgr.o 
+#被测试类的OBJ对象
+TESTEDOBJS = $(addprefix $(CODE)/,$(OBJS)) 
 
 #生成的目标文件
 TARGET = gtest
 
+#生成gtest文件后清除文件覆盖数据
 all : $(TARGET)
+	make clear
 
 #生成目标文件之后，将gcda文件和测试覆盖率文件删除
-#lcov -d ./ -z 将当前目录下的gcda覆盖率文件清空
-$(TARGET) : $(BINARY) $(TESTEDOBJS)
+$(TARGET) : $(TESTEDOBJS) $(BINARY)
 	$(CXX) $(CXXFLAGS) $(INCLUDE) $^ -o $@ $(LIBS)
-	lcov -b ./ -d ./ -z
-	cd CODE;lcov -d ./ -z;cd -
-	rm -rf report.info $(HTML_DIR)/*
+
+#编译待测试类
+$(TESTEDOBJS) : $(SOURCECODE)
+	@cp -p $^ $(CODE)
+	cd $(CODE);make;cd -
 
 %.o : %.cpp
 	$(CXX) -c $(CXXFLAGS) $(INCLUDE) $^ -o $@
 
-#生成代码覆盖率文件，先将源码文件拷贝到obj目录中
+#生成代码覆盖率文件
 report :
 	lcov -d ./ -c -o report.info
 	genhtml report.info -o $(HTML_DIR)
 
-
-#delete all gcda files to reset all execution counts to zero
-#delete outputfile.info and report
-#reset : 
-#	lcov -d ./ -z
-#	cd $(TESTED_DIR)/obj;lcov -d ./ -z;cd -
-#	rm -rf report.info $(HTML_DIR)/*
-
+#lcov -d ./ -z 将当前目录下的gcda覆盖率文件清空
+clear:
+	lcov -b ./ -d ./ -z
+	cd $(CODE);make clear;cd -
+	rm -rf report.info $(HTML_DIR)/*
+	
 #删除所有生成的文件
 clean :
-	rm -rf $(TARGET) *.o *.gcno *.gcda *.gcov report.info $(TESTED_DIR)/obj/*.gcda $(HTML_DIR)/* $(TESTED_DIR)/obj/*.cpp
+	@rm -rf $(TARGET) *.o *.gcno *.gcda *.gcov report.info $(HTML_DIR)/*
+	cd $(CODE);make clean;cd -
 
 #忽略文件名为clean的文件
 .PHONY : clean
+
+#################################################
+#						#
+#缺点:可能会多次进入$(CODE)目录编译		#
+#						#
+#原因：	$(TESTEDOBJS) : $(SOURCECODE)		#
+#	一旦$(SOURCECODE)中有一个文件更新，	#
+#	$(TESTEDOBJS)中的所有文件都会被认	#
+#	为比$(TESTEDOBJS)旧，从而这个规则	#
+#	会触发多次				#
+#						#
+#################################################
