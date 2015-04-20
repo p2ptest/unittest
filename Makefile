@@ -38,6 +38,9 @@ $(TESTEDOBJS) : $(SOURCECODE)
 	@cp -p $^ $(CODE)
 	cd $(CODE);make;cd -
 
+copy : $(SOURCECODE)
+	@cp -p $^ $(CODE)
+
 %.o : %.cpp
 	$(CXX) -c $(CXXFLAGS) $(INCLUDE) $^ -o $@
 
