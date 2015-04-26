@@ -2,10 +2,13 @@
 #include "gmock/gmock.h"
 #include "framecommon/framecommon.h"
 #include "mybasecmd.h"
+#include "mybasecmd_h_test.h"
 using namespace testing;
 
 /**
  *结构体TCmdHead的测试
+ *命令的头结构
+ *回包和发包中都有
  */
 
 TEST(TCmdHeadTest, Create)
@@ -90,15 +93,6 @@ TEST(TCmdHeadTest, Decode)
         EXPECT_EQ(99, cmdHead_copy.m_nCmdId);
 }
 
-class MockTCmdBody
-{
-	public:
-	
-	MOCK_METHOD0(GetSize, int());
-
-	MOCK_METHOD1(Encode, int(CBufMgr &bufMgr));
-};
-
 TEST(TCmdHeadTest, SetBodyLen)
 {
 	TCmdHead cmdHead;
@@ -127,6 +121,8 @@ TEST(TCmdHeadTest, GetBufLen)
 
 /**
  * 类CEncodeCmd的测试
+ * 该类实现编码命令
+ * 发包中使用
  */
 
 TEST(CEncodeCmdTest, Create)
@@ -157,43 +153,84 @@ TEST(CEncodeCmdTest, GetCmdHeadAndBodyTypeTest)
 	CEncodeCmd<TCmdHead, MockTCmdBody> encodeCmd;
 	::testing::StaticAssertTypeEq<MockTCmdBody, typeof(encodeCmd.GetCmdBody())>();
 	::testing::StaticAssertTypeEq<TCmdHead, typeof(encodeCmd.GetCmdHead())>();
+	EXPECT_EQ(0, encodeCmd.GetCmdBody().GetSize());
+	EXPECT_EQ(12, encodeCmd.GetCmdHead().GetBufLen());
 }
 
-/*
-class MockTCmdHead : TCmdHead
+TEST(CEncodeCmdTest, ProcessCmdTestOne)
 {
-	public:
+	MyCEncodeCmd encodeCmd;
+	encodeCmd.HeadBodyNoCall();
+	EXPECT_EQ(-1, encodeCmd.Process());
+}
 
-	MOCK_METHOD1(Encode, int(CBufMgr &bufMgr));
-};
-
-class MyCEncodeCmd : public CEncodeCmd<MockTCmdHead, MockTCmdBody>
+TEST(CEncodeCmdTest, ProcessCmdTestTwo)
 {
-	MyCEncodeCmd()
-	{
-		EXPECT_CALL(m_CmdHead, Encode(_))
-			.WillOnce(Return(0))
-			.WillOnce(Return(0))
-			.WillRepeatedly(Return(-1));
-
-		EXPECT_CALL(m_CmdBody, Encode(_))
-			.WillOnce(Return(0))
-			.WillOnce(Return(-1))
-			.WillOnce(Return(0))
-			.WillOnce(Return(-1));
-	}
-};
-
-TEST(CEncodeCmdTest, Process)
-{
+	MyCEncodeCmd encodeCmd;
+	encodeCmd.HeadBodyCall();
+	EXPECT_EQ(-1, encodeCmd.Process());
 	
+	EXPECT_EQ(0, encodeCmd.Process());
+	EXPECT_EQ(10, encodeCmd.GetBufLen());
+
+	EXPECT_EQ(-1, encodeCmd.Process());
+	EXPECT_EQ(-1, encodeCmd.Process());
+	EXPECT_EQ(-2, encodeCmd.Process());
 }
-*/
 
+/**
+ * 类CDecodeCmd的测试
+ * 该类实现解码命令
+ * 收包中使用
+ */
+TEST(CDecodeCmdTest, Create)
+{
+	char *temp = new char[20];
+	CDecodeCmd<MockTCmdHead, MockTCmdBody> decodeCmd(temp, 20);
+	EXPECT_EQ(temp, decodeCmd.GetBuf());
+	EXPECT_EQ(20, decodeCmd.GetBufLen());
+	
+	CDecodeCmd<MockTCmdHead, MockTCmdBody> decodeCmd_1(NULL, 0);
+	EXPECT_EQ(NULL, decodeCmd_1.GetBuf());
+	EXPECT_EQ(0, decodeCmd_1.GetBufLen());
+}
 
+TEST(CDecodeCmdTest, BufTest)
+{
+	CDecodeCmd<MockTCmdHead, MockTCmdBody> decodeCmd(NULL, 0);
+	EXPECT_EQ(NULL, decodeCmd.GetBuf());
+	EXPECT_EQ(0, decodeCmd.GetBufLen());
 
+	char *temp = new char[20];	
+	decodeCmd.AttachBuf(temp, 20);
+	EXPECT_EQ(temp, decodeCmd.GetBuf());
+	EXPECT_EQ(20, decodeCmd.GetBufLen());
+	
+	decodeCmd.DetachBuf();
+	EXPECT_EQ(NULL, decodeCmd.GetBuf());
+	EXPECT_EQ(0, decodeCmd.GetBufLen());
+}
 
+TEST(CDecodeCmdTest, GetCmdHeadAndBodyTypeTest)
+{
+	CDecodeCmd<TCmdHead, MockTCmdBody> decodeCmd(NULL, 0);
+	::testing::StaticAssertTypeEq<MockTCmdBody, typeof(decodeCmd.GetCmdBody())>();
+	::testing::StaticAssertTypeEq<TCmdHead, typeof(decodeCmd.GetCmdHead())>();
+	EXPECT_EQ(0, decodeCmd.GetCmdBody().GetSize());
+	EXPECT_EQ(12, decodeCmd.GetCmdHead().GetBufLen());
+}
 
+TEST(CDecodeCmdTest, Process)
+{
+	MyCDecodeCmd decodeCmd(NULL, 0);
+	decodeCmd.HeadBodyCall();
+	EXPECT_EQ(-1, decodeCmd.Process());
+	
+	EXPECT_EQ(0, decodeCmd.Process());
+	EXPECT_EQ(-1, decodeCmd.Process());
+	EXPECT_EQ(-1, decodeCmd.Process());
+	EXPECT_EQ(-1, decodeCmd.Process());
+}
 
 
 
