@@ -1,31 +1,25 @@
 #包括底层库和服务器的头文件和库文件
 include Makefile.comm
 
-#当前目录所有的目标文件
-BINARY = $(patsubst %.cpp,%.o,$(wildcard *.cpp))
-
-#被测试类的OBJ对象
-TESTEDOBJS = $(addprefix $(CODE)/,$(OBJS)) 
-
-#生成的目标文件
-TARGET = gtest
-
-#生成gtest文件后清除文件覆盖数据
+TARGET = server_test unit_test
+#生成可执行文件后清除文件覆盖数据
 #生成目标文件之后，将gcda文件和测试覆盖率文件删除
-all : $(TARGET)
+all : copy $(TARGET)
 	make clear
 
-$(TARGET) : $(TESTEDOBJS) $(BINARY)
+copy : $(SOURCECODE)
+	@mkdir -p $(CODE)
+	@cp -p $^ $(CODE)
+
+#链接生成可执行文件，此为程序可执行文件
+server_test : $(OBJS)
 	$(CXX) $(CFLAGS) $^ -o $@ $(LIBS)
 
-#编译待测试类
-$(TESTEDOBJS) : $(SOURCECODE)
-	@cp -p $^ $(CODE)
-	cd $(CODE);make;cd -
+#单元测试可执行文件
+unit_test : $(OBJS_WITHOUT_MAIN) $(OBJS_TEST)
+	$(CXX) $(CFLAGS) $^ -o $@ $(LIBS)
 
-copy : $(SOURCECODE)
-	@cp -p $^ $(CODE)
-
+#编译类
 %.o : %.cpp
 	$(CXX) -c $(CFLAGS) $(INCLUDE) $^ -o $@
 
@@ -37,25 +31,12 @@ report :
 #lcov -d ./ -z 将当前目录下的gcda覆盖率文件清空
 clear:
 	lcov -b ./ -d ./ -z
-	cd $(CODE);make clear;cd -
 	rm -rf report.info $(HTML_DIR)/*
 	
 #删除所有生成的文件
 clean :
-	@rm -rf $(TARGET) *.o *.gcno *.gcda *.gcov report.info $(HTML_DIR)/*
-	cd $(CODE);make clean;cd -
+	@rm -rf $(TARGET) *.o *.gcno *.gcda *.gcov $(CODE)
+	@rm -rf report.info $(HTML_DIR)/*
 
 #忽略文件名为clean的文件
 .PHONY : clean
-
-#################################################
-#						#
-#缺点:可能会多次进入$(CODE)目录编译		#
-#						#
-#原因：	$(TESTEDOBJS) : $(SOURCECODE)		#
-#	一旦$(SOURCECODE)中有一个文件更新，	#
-#	$(TESTEDOBJS)中的所有文件都会被认	#
-#	为比$(TESTEDOBJS)旧，从而这个规则	#
-#	会触发多次				#
-#						#
-#################################################

@@ -23,11 +23,13 @@ CODE = CODE
 #源文件，包括头文件和cpp文件
 SOURCECODE = $(wildcard $(SERVER_ROOT)/src/*/*.cpp $(SERVER_ROOT)/src/*/*.h)
 
-#notdir 去除路径
-SOURCECODE_NOTDIR = $(notdir $(SOURCECODE))
+#notdir去除路径，patsubst将.cpp后缀变为.o后缀，filter-out过滤掉头文件，addprefix添加目录前缀
+OBJS = $(addprefix $(CODE)/,$(filter-out %.h,$(patsubst %.cpp,%.o,$(notdir $(SOURCECODE)))))
+OBJS_WITHOUT_MAIN = $(filter-out %main.o,$(OBJS))
 
-#目标文件,去除main.o
-OBJS = $(filter-out %.h main.o,$(patsubst %.cpp,%.o,$(SOURCECODE_NOTDIR)))
+#当前目录所有的目标文件，即测试代码
+OBJS_TEST = $(patsubst %.cpp,%.o,$(wildcard *.cpp))
+
 
 FRAMECOMMON=${BASEBASEROOT}/framecommon
 SRVFRAME=${BASEBASEROOT}/srvframe
