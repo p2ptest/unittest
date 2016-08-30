@@ -1,21 +1,6 @@
 #包括底层库和服务器的头文件和库文件
 include Makefile.comm
 
-#被测试程序的代码转移目录
-CODE = CODE
-
-#gteset的主目录
-GTEST_DIR = $(GMOCK_DIR)/gtest
-
-#gtest和gmock头文件目录,默认包括当前目录
-INCLUDE += -I$(GTEST_DIR)/include -I$(GMOCK_DIR)/include -I./$(CODE)
-
-#编译选项，-fprofile-arcs -ftest-coverage为gcov需要，以便统计代码覆盖率
-CXXFLAGS += -g -Wall -Wextra -pthread -fprofile-arcs -ftest-coverage
-
-#libgmock.a的所在目录,该静态库包含gtest-all.o
-LIBS += -lgmock -L$(GMOCK_DIR)/make
-
 #当前目录所有的目标文件
 BINARY = $(patsubst %.cpp,%.o,$(wildcard *.cpp))
 
@@ -26,12 +11,12 @@ TESTEDOBJS = $(addprefix $(CODE)/,$(OBJS))
 TARGET = gtest
 
 #生成gtest文件后清除文件覆盖数据
+#生成目标文件之后，将gcda文件和测试覆盖率文件删除
 all : $(TARGET)
 	make clear
 
-#生成目标文件之后，将gcda文件和测试覆盖率文件删除
 $(TARGET) : $(TESTEDOBJS) $(BINARY)
-	$(CXX) $(CXXFLAGS) $(INCLUDE) $^ -o $@ $(LIBS)
+	$(CXX) $(CFLAGS) $^ -o $@ $(LIBS)
 
 #编译待测试类
 $(TESTEDOBJS) : $(SOURCECODE)
@@ -42,7 +27,7 @@ copy : $(SOURCECODE)
 	@cp -p $^ $(CODE)
 
 %.o : %.cpp
-	$(CXX) -c $(CXXFLAGS) $(INCLUDE) $^ -o $@
+	$(CXX) -c $(CFLAGS) $(INCLUDE) $^ -o $@
 
 #生成代码覆盖率文件
 report :

@@ -1,17 +1,24 @@
-#被测试程序的主目录,写绝对路径
-SERVER_ROOT = /opt/p2p_server/branches/matrix/server/reallive/mxrsessionapply
+#绝对路径
+BASEBASEROOT=/opt/p2p_server/branches/matrix/server
 
-#gmock的主目录
-GMOCK_DIR = /usr/local/gmock-1.7.0
+#被测试程序的主目录,写绝对路径
+SERVER_ROOT = ${BASEBASEROOT}/reallive/mxrsessionapply
 
 #生成测试报告目录
 HTML_DIR = /opt/data/gtest_report
 
 #########################################################
 #							#
-#		一般只需要更改上面的变量		#
+#		1.一般只需要更改上面的变量		#
+#		2.需要将libgmock.a -> gmock.a静态库     #
+#		放在/usr/local/lib目录下        	#
+#		3.将gtest和gmock的头文件目录放在	#
+#		/usr/local/include下			#
 #							#
 #########################################################
+
+#被测试程序的代码转移目录
+CODE = CODE
 
 #源文件，包括头文件和cpp文件
 SOURCECODE = $(wildcard $(SERVER_ROOT)/src/*/*.cpp $(SERVER_ROOT)/src/*/*.h)
@@ -22,18 +29,18 @@ SOURCECODE_NOTDIR = $(notdir $(SOURCECODE))
 #目标文件,去除main.o
 OBJS = $(filter-out %.h main.o,$(patsubst %.cpp,%.o,$(SOURCECODE_NOTDIR)))
 
-#绝对路径
-BASEBASEROOT=/opt/p2p_server/branches/matrix/server
-
 FRAMECOMMON=${BASEBASEROOT}/framecommon
 SRVFRAME=${BASEBASEROOT}/srvframe
 UTILS=${BASEBASEROOT}/utils
 
 #INCLUDE=-I/usr/include/mysql/ -I$(FRAMECOMMON)/include -I$(SRVFRAME)/include -I${UTILS}/include/json -I${UTILS}/include/hiredis -I${SERVER_ROOT}/src/command -I${SERVER_ROOT}/src/main -I${SERVER_ROOT}/src/common -I${SERVER_ROOT}/src/task -I${SERVER_ROOT}/src/thread
 
-INCLUDE=-I/usr/include/mysql/ -I$(FRAMECOMMON)/include -I$(SRVFRAME)/include -I${UTILS}/include/json -I${UTILS}/include/hiredis
+INCLUDE = -I/usr/include/mysql/ -I$(FRAMECOMMON)/include -I$(SRVFRAME)/include -I${UTILS}/include/json -I${UTILS}/include/hiredis -I./$(CODE)
 
-LIBS=-L${SRVFRAME}/lib  -lsrvframe -L${FRAMECOMMON}/lib -lframecommon /usr/lib64/mysql/libmysqlclient_r.a -lz -lpthread -lssl -L${UTILS}/lib -luuid -lhiredis -ljson -lrt
+LIBS = -L${SRVFRAME}/lib  -lsrvframe -L${FRAMECOMMON}/lib -lframecommon /usr/lib64/mysql/libmysqlclient_r.a -lz -lpthread -lssl -L${UTILS}/lib -luuid -lhiredis -ljson -lrt -lgmock -L/usr/local/lib
+
+#LIBS += -lgcov
+
 #定义宏
-MACRO=-D_REENTRANT -D__USE_EPOLL
-CFLAGS = -g -Wall ${MACRO} -fprofile-arcs -ftest-coverage
+MACRO = -D_REENTRANT -D__USE_EPOLL
+CFLAGS = -g -Wall ${MACRO} -Wextra -pthread -fprofile-arcs -ftest-coverage -g3
