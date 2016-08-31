@@ -5,11 +5,12 @@ TARGET = server_test unit_test
 #生成可执行文件后清除文件覆盖数据
 #生成目标文件之后，将gcda文件和测试覆盖率文件删除
 all : copy $(TARGET)
-	make clear
+#	make clear
 
 copy : $(SOURCECODE)
 	@mkdir -p $(CODE)
-	@cp -p $^ $(CODE)
+	@cp -rp $(SERVER_ROOT)/src/* $(CODE)
+	@rm -rf $(CODE)/make* $(CODE)/*/make*
 
 #链接生成可执行文件，此为程序可执行文件
 server_test : $(OBJS)

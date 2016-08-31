@@ -23,9 +23,10 @@ CODE_TEST = CODE_TEST
 
 #源文件，包括头文件和cpp文件
 SOURCECODE = $(wildcard $(SERVER_ROOT)/src/*/*.cpp $(SERVER_ROOT)/src/*/*.h)
+TMP = $(subst $(SERVER_ROOT)/src,$(CODE),$(SOURCECODE))
 
-#notdir去除路径，patsubst将.cpp后缀变为.o后缀，filter-out过滤掉头文件，addprefix添加目录前缀
-OBJS = $(addprefix $(CODE)/,$(filter-out %.h,$(patsubst %.cpp,%.o,$(notdir $(SOURCECODE)))))
+#patsubst将.cpp后缀变为.o后缀，filter-out过滤掉头文件
+OBJS = $(filter-out %.h,$(patsubst %.cpp,%.o,$(TMP)))
 OBJS_WITHOUT_MAIN = $(filter-out %main.o,$(OBJS))
 
 #测试代码目标文件
@@ -36,9 +37,7 @@ FRAMECOMMON=${BASEBASEROOT}/framecommon
 SRVFRAME=${BASEBASEROOT}/srvframe
 UTILS=${BASEBASEROOT}/utils
 
-#INCLUDE=-I/usr/include/mysql/ -I$(FRAMECOMMON)/include -I$(SRVFRAME)/include -I${UTILS}/include/json -I${UTILS}/include/hiredis -I${SERVER_ROOT}/src/command -I${SERVER_ROOT}/src/main -I${SERVER_ROOT}/src/common -I${SERVER_ROOT}/src/task -I${SERVER_ROOT}/src/thread
-
-INCLUDE = -I/usr/include/mysql/ -I$(FRAMECOMMON)/include -I$(SRVFRAME)/include -I${UTILS}/include/json -I${UTILS}/include/hiredis -I./$(CODE)
+INCLUDE = -I/usr/include/mysql/ -I$(FRAMECOMMON)/include -I$(SRVFRAME)/include -I${UTILS}/include/json -I${UTILS}/include/hiredis -I./$(CODE)/main -I./$(CODE)/command -I./$(CODE)/common -I./$(CODE)/task -I./$(CODE)/thread
 
 LIBS = -L${SRVFRAME}/lib  -lsrvframe -L${FRAMECOMMON}/lib -lframecommon /usr/lib64/mysql/libmysqlclient_r.a -lz -lpthread -lssl -L${UTILS}/lib -luuid -lhiredis -ljson -lrt -lgmock -L/usr/local/lib
 
