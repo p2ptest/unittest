@@ -40,3 +40,6 @@ clean :
 
 #忽略文件名为clean的文件
 .PHONY : clean
+
+#检查内存泄漏
+#valgrind -v --tool=memcheck --leak-check=full ./server_test -l >> valReport 2>&1
