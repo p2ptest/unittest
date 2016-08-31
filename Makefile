@@ -35,7 +35,7 @@ clear:
 	
 #删除所有生成的文件
 clean :
-	@rm -rf $(TARGET) *.o *.gcno *.gcda *.gcov $(CODE)
+	@rm -rf $(TARGET) $(CODE_TEST)/*.o $(CODE_TEST)/*.gcno $(CODE_TEST)/*.gcda $(CODE_TEST)/*.gcov $(CODE)
 	@rm -rf report.info $(HTML_DIR)/*
 
 #忽略文件名为clean的文件

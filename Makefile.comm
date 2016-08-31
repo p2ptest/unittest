@@ -19,6 +19,7 @@ HTML_DIR = /opt/data/gtest_report
 
 #被测试程序的代码转移目录
 CODE = CODE
+CODE_TEST = CODE_TEST
 
 #源文件，包括头文件和cpp文件
 SOURCECODE = $(wildcard $(SERVER_ROOT)/src/*/*.cpp $(SERVER_ROOT)/src/*/*.h)
@@ -27,8 +28,8 @@ SOURCECODE = $(wildcard $(SERVER_ROOT)/src/*/*.cpp $(SERVER_ROOT)/src/*/*.h)
 OBJS = $(addprefix $(CODE)/,$(filter-out %.h,$(patsubst %.cpp,%.o,$(notdir $(SOURCECODE)))))
 OBJS_WITHOUT_MAIN = $(filter-out %main.o,$(OBJS))
 
-#当前目录所有的目标文件，即测试代码
-OBJS_TEST = $(patsubst %.cpp,%.o,$(wildcard *.cpp))
+#测试代码目标文件
+OBJS_TEST = $(patsubst %.cpp,%.o,$(wildcard $(CODE_TEST)/*.cpp))
 
 
 FRAMECOMMON=${BASEBASEROOT}/framecommon
