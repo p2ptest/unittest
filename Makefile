@@ -5,7 +5,7 @@ TARGET = server_test unit_test
 #生成可执行文件后清除文件覆盖数据
 #生成目标文件之后，将gcda文件和测试覆盖率文件删除
 all : copy $(TARGET)
-	make clear
+#	make clear
 
 copy : $(SOURCECODE)
 	@mkdir -p $(CODE)
