@@ -20,6 +20,10 @@ server_test : $(OBJS)
 unit_test : $(OBJS_WITHOUT_MAIN) $(OBJS_TEST)
 	$(CXX) $(CFLAGS) $^ -o $@ $(LIBS)
 
+#只编译链接CODE_TEST目录
+unit_test_only_code_test : $(OBJS_TEST)
+	$(CXX) $(CFLAGS) $^ -o $@ $(LIBS)
+
 #编译类
 %.o : %.cpp
 	$(CXX) -c $(CFLAGS) $(INCLUDE) $^ -o $@
@@ -36,7 +40,7 @@ clear:
 	
 #删除所有生成的文件
 clean :
-	@rm -rf $(TARGET) $(CODE_TEST)/*.o $(CODE_TEST)/*.gcno $(CODE_TEST)/*.gcda $(CODE_TEST)/*.gcov $(CODE)
+	@rm -rf $(TARGET) unit_test_only_code_test $(CODE_TEST)/*.o $(CODE_TEST)/*.gcno $(CODE_TEST)/*.gcda $(CODE_TEST)/*.gcov $(CODE)
 	@rm -rf report.info $(HTML_DIR)/*
 
 #忽略文件名为clean的文件
