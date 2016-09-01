@@ -31,17 +31,18 @@ OBJS_WITHOUT_MAIN = $(filter-out %main.o,$(OBJS))
 #测试代码目标文件
 OBJS_TEST = $(patsubst %.cpp,%.o,$(wildcard $(CODE_TEST)/*.cpp))
 
+PUBLIC_DIR = ${BASEBASEROOT}/../public
+FRAMECOMMON = ${BASEBASEROOT}/framecommon
+SRVFRAME = ${BASEBASEROOT}/srvframe
+UTILS = ${BASEBASEROOT}/utils
 
-FRAMECOMMON=${BASEBASEROOT}/framecommon
-SRVFRAME=${BASEBASEROOT}/srvframe
-UTILS=${BASEBASEROOT}/utils
+INCLUDE = -I/usr/include/mysql/\
+          -I${PUBLIC_DIR} -I$(FRAMECOMMON)/include -I$(SRVFRAME)/include -I${UTILS}/include/json -I${UTILS}/include/hiredis\
+          -I./$(CODE)/main -I./$(CODE)/command -I./$(CODE)/common -I./$(CODE)/task -I./$(CODE)/thread
 
-#INCLUDE=-I/usr/include/mysql/ -I$(FRAMECOMMON)/include -I$(SRVFRAME)/include -I${UTILS}/include/json -I${UTILS}/include/hiredis -I${SERVER_ROOT}/src/command -I${SERVER_ROOT}/src/main -I${SERVER_ROOT}/src/common -I${SERVER_ROOT}/src/task -I${SERVER_ROOT}/src/thread
-
-INCLUDE = -I/usr/include/mysql/ -I$(FRAMECOMMON)/include -I$(SRVFRAME)/include -I${UTILS}/include/json -I${UTILS}/include/hiredis -I./$(CODE)
-
-LIBS = -L${SRVFRAME}/lib  -lsrvframe -L${FRAMECOMMON}/lib -lframecommon /usr/lib64/mysql/libmysqlclient_r.a -lz -lpthread -lssl -L${UTILS}/lib -luuid -lhiredis -ljson -lrt -lgmock -L/usr/local/lib
-
+LIBS = -L${SRVFRAME}/lib  -lsrvframe -L${FRAMECOMMON}/lib -lframecommon -L${UTILS}/lib\
+       /usr/lib64/mysql/libmysqlclient_r.a -lz -lpthread -lssl -luuid -lhiredis -ljson -lrt\
+       -lgmock -L/usr/local/lib
 #LIBS += -lgcov
 
 #定义宏
