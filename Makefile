@@ -21,7 +21,7 @@ unit_test : $(OBJS_WITHOUT_MAIN) $(OBJS_TEST)
 
 #只编译链接CODE_TEST目录
 unit_test_only_code_test : $(OBJS_TEST)
-        $(CXX) $(CFLAGS) $^ -o $@ $(LIBS)
+	$(CXX) $(CFLAGS) $^ -o $@ $(LIBS)
 
 #编译类
 %.o : %.cpp
