@@ -36,7 +36,7 @@
 ├── test
 └── unittest
 
-配置Makefile.comm
+配置Makefile.comm示例:
 #绝对路径
 BASEBASEROOT=/opt/p2p_server/branches/matrix/server
 
