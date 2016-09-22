@@ -5,7 +5,7 @@ BASEBASEROOT=/opt/p2p_server/branches/matrix/server
 SERVER_ROOT = ${BASEBASEROOT}/reallive/mxrsessionapply
 
 #生成测试报告目录
-HTML_DIR = /opt/data/gtest_report
+HTML_DIR = ./gtest_report
 
 #########################################################
 #							#
