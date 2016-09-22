@@ -9,7 +9,7 @@
 - 可生成两个可执行文件，分别是server_test和unit_test
 - server_test是开发代码编译后生成的可执行文件，可代替build.sh生成的可执行文件来执行功能测试；与build.sh生成的文件不同的是，执行过后可产生代码覆盖率信息，以便生成代码覆盖率报告
 - unit_test是CODE_TEST目录下的测试代码编译后生成的可执行文件，执行单元测试
-- 具体单元测试代码的格式可查看分支mxrsessionapply中CODE_TEST目录下的示范代码
+- 单元测试代码可参考分支mxrsessionapply中CODE_TEST目录下的示范代码
 
 
 
@@ -58,7 +58,7 @@ HTML_DIR = ./gtest_report
 - 功能测试
 ```
 将server_test拷贝到程序目录下
-# copy server_test
+# copy server_test ..
 
 到程序目录下启动程序
 # ./server_test -l 
