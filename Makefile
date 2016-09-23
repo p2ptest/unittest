@@ -6,6 +6,7 @@ TARGET = server_test unit_test
 #生成目标文件之后，将gcda文件和测试覆盖率文件删除
 all : copy $(TARGET)
 #	make clear
+	@cp -p server_test $(SERVER_ROOT)
 
 copy : $(SOURCECODE)
 	@mkdir -p $(CODE)
@@ -22,6 +23,11 @@ unit_test : $(OBJS_WITHOUT_MAIN) $(OBJS_TEST)
 #只编译链接CODE_TEST目录
 unit_test_only_code_test : $(OBJS_TEST)
 	$(CXX) $(CFLAGS) $^ -o $@ $(LIBS)
+
+start : server_test
+	cd $(SERVER_ROOT);./server_test -l &
+kill : 
+	killall server_test
 
 #编译类
 %.o : %.cpp
@@ -40,7 +46,8 @@ clear:
 #删除所有生成的文件
 clean :
 	@rm -rf $(TARGET) unit_test_only_code_test $(CODE_TEST)/*.o $(CODE_TEST)/*.gcno $(CODE_TEST)/*.gcda $(CODE_TEST)/*.gcov $(CODE)
-	@rm -rf report.info $(HTML_DIR)/*
+	@rm -rf report.info $(HTML_DIR)
+	@rm -rf $(SERVER_ROOT)/server_test
 
 #忽略文件名为clean的文件
 .PHONY : clean
