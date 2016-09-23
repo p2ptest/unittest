@@ -38,7 +38,7 @@ UTILS = ${BASEBASEROOT}/utils
 
 INCLUDE = -I/usr/include/mysql/\
           -I${PUBLIC_DIR} -I$(FRAMECOMMON)/include -I$(SRVFRAME)/include -I${UTILS}/include/json -I${UTILS}/include/hiredis\
-          -I./$(CODE)/main -I./$(CODE)/command -I./$(CODE)/common -I./$(CODE)/task -I./$(CODE)/thread
+          -I./$(CODE)
 
 LIBS = -L${SRVFRAME}/lib  -lsrvframe -L${FRAMECOMMON}/lib -lframecommon -L${UTILS}/lib\
        /usr/lib64/mysql/libmysqlclient_r.a -lz -lpthread -lssl -luuid -lhiredis -ljson -lrt\
