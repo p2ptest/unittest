@@ -59,10 +59,11 @@ HTML_DIR = ./gtest_report
 ```
 生成server_test后会自动复制到程序目录下，不需要手动复制
 
-到程序目录下启动程序
-# ./server_test -l 
+启动程序
+# make start
 
-待功能测试完毕后关闭
+关闭程序
+# make kill
 ```
 - 单元测试
 ```
