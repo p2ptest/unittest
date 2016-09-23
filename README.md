@@ -57,8 +57,7 @@ HTML_DIR = ./gtest_report
 ```
 - 功能测试
 ```
-将server_test拷贝到程序目录下
-# copy server_test ..
+生成server_test后会自动复制到程序目录下，不需要手动复制
 
 到程序目录下启动程序
 # ./server_test -l 
