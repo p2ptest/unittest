@@ -21,5 +21,10 @@ pipeline {
         sh 'echo "echo"'
       }
     }
+    stage('hah') {
+      steps {
+        milestone(ordinal: 1, label: '11')
+      }
+    }
   }
 }
