@@ -9,6 +9,7 @@ pipeline {
     stage('test') {
       steps {
         sh 'python --version'
+        timeout(time: 1, unit: 'HOURS')
       }
     }
   }
