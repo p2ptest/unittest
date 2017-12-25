@@ -1,10 +1,5 @@
 pipeline {
-  agent {
-    docker {
-      image 'python:3-alpine'
-    }
-  }
-  
+  agent any
   parameters {
     password(name: 'CredsToUse', description: 'A password to build with', defaultValue: '')
   }
@@ -14,7 +9,6 @@ pipeline {
   stages {
     stage('test') {
       steps {
-        sh 'python --version'
         echo $BUILD_USR_CREDS
       }
     }
