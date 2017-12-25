@@ -9,7 +9,7 @@ pipeline {
   stages {
     stage('test') {
       steps {
-        echo 123
+        echo "$BUILD_USR_CREDS"
       }
     }
   }
