@@ -1,29 +1,14 @@
 pipeline {
-  agent any
+  agent {
+    docker {
+      image 'python:3-alpine'
+    }
+    
+  }
   stages {
-    stage('build') {
-      parallel {
-        stage('build') {
-          steps {
-            echo 'hah'
-          }
-        }
-        stage('build-2') {
-          steps {
-            echo 'hiahia'
-            echo 'heihei'
-          }
-        }
-      }
-    }
-    stage('echo') {
+    stage('') {
       steps {
-        sh 'echo "echo"'
-      }
-    }
-    stage('hah') {
-      steps {
-        milestone(ordinal: 1, label: '11')
+        sh 'python --version'
       }
     }
   }
