@@ -6,7 +6,7 @@ pipeline {
   }
   
   parameters {
-    choice(name: ‘PerformMavenRelease’, choices: ‘False\nTrue’, description: 'desc')
+    choice(name: ‘PerformMavenRelease’, choices: ‘False True’, description: 'desc')
     password(name: 'CredsToUse', description: 'A password to build with', defaultValue: '')
   }
   environment {
